@@ -12,6 +12,6 @@ COPY . .
 
 RUN mkdir -p fitfuel_memory
 
-EXPOSE 7860
+EXPOSE 8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--timeout", "120", "--workers", "2", "--preload", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--timeout", "120", "--workers", "2", "--preload", "app:app"]
