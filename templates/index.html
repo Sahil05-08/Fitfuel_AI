@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FitFuel AI — Fitness Meal Planner</title>
+  <link rel="stylesheet" href="/static/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- Floating emoji background -->
+  <div id="fitFloat"></div>
+
+  <!-- ── Header ── -->
+  <header>
+    <span class="header-icon">💪</span>
+    <h1>FitFuel AI</h1>
+    <p class="header-sub">Fitness Meal Planner &nbsp;·&nbsp; Macro Optimizer</p>
+    <div class="goal-badges">
+      <span class="badge blue">🏋️ Muscle Gain</span>
+      <span class="badge red">🔥 Fat Loss</span>
+      <span class="badge amber">🏃 Endurance</span>
+      <span class="badge green">⚖️ Maintenance</span>
+      <span class="badge purple">🧬 Macro Tracking</span>
+      <span class="badge teal">🛒 Shopping List</span>
+      <span class="badge pink">💊 Supplements</span>
+    </div>
+    <div class="header-divider"></div>
+  </header>
+
+  <!-- ── Tab Navigation ── -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('chat', this)">
+      <span class="tab-icon">💬</span> Recipe Chat
+    </button>
+    <button class="tab-btn" onclick="showTab('profile', this)">
+      <span class="tab-icon">📊</span> Fitness Profile
+    </button>
+    <button class="tab-btn" onclick="showTab('mealplan', this)">
+      <span class="tab-icon">📅</span> Meal Planner
+    </button>
+    <button class="tab-btn" onclick="showTab('tools', this)">
+      <span class="tab-icon">🛠️</span> Tools
+    </button>
+    <button class="tab-btn" onclick="showTab('scan', this)">
+      <span class="tab-icon">📸</span> Fridge Scan
+    </button>
+    <button class="tab-btn" onclick="showTab('guide', this)">
+      <span class="tab-icon">❓</span> Guide
+    </button>
+  </nav>
+
+  <main>
+
+    <!-- ── TAB 1: CHAT ── -->
+    <div id="tab-chat" class="tab-content active">
+
+      <!-- Chat messages -->
+      <div id="chatbox"></div>
+      <!-- Message input -->
+      <div class="input-row">
+        <input type="text" id="userInput"
+               placeholder="e.g. I have chicken, I want to lose fat..."
+               onkeydown="if(event.key==='Enter') sendMessage()"/>
+        <button class="btn-primary send-btn" onclick="sendMessage()">➤</button>
+      </div>
+      <button class="btn-secondary btn-clear-chat" onclick="clearChat()">🗑️ Clear Chat</button>
+    </div>
+
+    <!-- ── TAB 2: FITNESS PROFILE ── -->
+    <div id="tab-profile" class="tab-content">
+      <div class="section-card">
+        <h3>📊 Calculate Your Daily Targets</h3>
+        <p>Enter your details to get personalized calorie, macro &amp; hydration targets based on your goal.</p>
+      </div>
+      <div class="form-grid">
+        <label>⚖️ Weight (kg)
+          <input type="number" id="p-weight" value="70" min="30" max="250"/>
+        </label>
+        <label>📏 Height (cm)
+          <input type="number" id="p-height" value="170" min="100" max="250"/>
+        </label>
+        <label>🎂 Age
+          <input type="number" id="p-age" value="25" min="10" max="100"/>
+        </label>
+        <label>👤 Gender
+          <select id="p-gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </label>
+        <label>🏃 Activity Level
+          <select id="p-activity">
+            <option value="sedentary">Sedentary (desk job, no exercise)</option>
+            <option value="light">Light (1–3 days/week)</option>
+            <option value="moderate" selected>Moderate (3–5 days/week)</option>
+            <option value="active">Active (6–7 days/week)</option>
+            <option value="very_active">Very Active (2x/day training)</option>
+          </select>
+        </label>
+        <label>🎯 Fitness Goal
+          <select id="p-goal">
+            <option value="fat_loss">🔥 Fat Loss</option>
+            <option value="muscle_gain">🏋️ Muscle Gain</option>
+            <option value="endurance">🏃 Endurance</option>
+            <option value="maintenance">⚖️ Maintenance</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn-primary" onclick="calcProfile()">🧮 Calculate My Targets</button>
+      <div id="profile-result" class="result-box hidden"></div>
+    </div>
+
+    <!-- ── TAB 3: MEAL PLANNER ── -->
+    <div id="tab-mealplan" class="tab-content">
+      <div class="section-card">
+        <h3>📅 Fitness Meal Plan Generator</h3>
+        <p>List your ingredients, set your goal and number of days — get a complete multi-day plan with macros for every meal.</p>
+      </div>
+      <div class="form-grid">
+        <label class="full-width">🥘 Your Ingredients (comma-separated)
+          <input type="text" id="mp-ingredients" placeholder="e.g. chicken, rice, broccoli, eggs, oats"/>
+        </label>
+        <label>🎯 Fitness Goal
+          <select id="mp-goal">
+            <option value="fat_loss">🔥 Fat Loss</option>
+            <option value="muscle_gain">🏋️ Muscle Gain</option>
+            <option value="endurance">🏃 Endurance</option>
+            <option value="maintenance">⚖️ Maintenance</option>
+          </select>
+        </label>
+        <label>🔥 Daily Calorie Target (kcal)
+          <input type="number" id="mp-calories" value="2000" min="1000" max="5000"/>
+        </label>
+        <label class="full-width">📅 Number of Days: 
+            <strong id="mp-days-val" class="days-val-highlight">7</strong>
+          <input type="range" min="3" max="30" value="7"
+                 oninput="document.getElementById('mp-days-val').textContent=this.value"
+                 id="mp-days"/>
+        </label>
+      </div>
+      <button class="btn-primary" onclick="genMealPlan()">📋 Generate Fitness Meal Plan</button>
+      <div id="mealplan-result" class="result-box hidden"></div>
+    </div>
+
+    <!-- ── TAB 4: TOOLS ── -->
+    <div id="tab-tools" class="tab-content">
+      <div class="tools-grid">
+
+        <!-- Macro Lookup -->
+        <div class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">🔍</div>
+            <div>
+              <h3>Macro Lookup</h3>
+              <p>Full nutrition per 100g for any ingredient.</p>
+            </div>
+          </div>
+          <input type="text" id="macro-input" placeholder="e.g. chicken, oats, salmon…"/>
+          <button class="btn-primary tool-btn" onclick="lookupMacro()">Look Up Macros</button>
+          <div id="macro-result" class="tool-result hidden"></div>
+        </div>
+
+        <!-- Ingredient Substitution -->
+        <div class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">🔄</div>
+            <div>
+              <h3>Ingredient Swap</h3>
+              <p>Smart substitutes — vegan, keto or allergy-friendly.</p>
+            </div>
+          </div>
+          <input type="text" id="sub-input" placeholder="e.g. paneer, chicken, whey…"/>
+          <button class="btn-primary tool-btn" onclick="lookupSub()">Find Swaps</button>
+          <div id="sub-result" class="tool-result hidden"></div>
+        </div>
+
+        <!-- Shopping List -->
+        <div class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">🛒</div>
+            <div>
+              <h3>Shopping List</h3>
+              <p>Weekly grocery list tailored to your fitness goal.</p>
+            </div>
+          </div>
+          <div class="tool-row">
+            <select id="shop-goal" aria-label="Shopping list fitness goal">
+              <option value="fat_loss">🔥 Fat Loss</option>
+              <option value="muscle_gain">🏋️ Muscle Gain</option>
+              <option value="endurance">🏃 Endurance</option>
+              <option value="maintenance">⚖️ Maintenance</option>
+            </select>
+            <select id="shop-days" aria-label="Number of days for shopping list">
+              <option value="3">3 days</option>
+              <option value="7" selected>7 days</option>
+            </select>
+          </div>
+          <button class="btn-primary tool-btn" onclick="getShoppingList()">Generate List</button>
+          <div id="shop-result" class="tool-result hidden"></div>
+        </div>
+
+        <!-- Water Intake -->
+        <div class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">💧</div>
+            <div>
+              <h3>Hydration Calculator</h3>
+              <p>Precise daily water target by weight &amp; activity level.</p>
+            </div>
+          </div>
+          <div class="tool-row">
+            <input type="number" id="water-weight" placeholder="Weight (kg)" min="30" max="200"/>
+            <select id="water-activity" aria-label="Activity level for hydration calculation">
+              <option value="sedentary">Sedentary</option>
+              <option value="light">Light</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="active">Active</option>
+              <option value="very_active">Very Active</option>
+            </select>
+          </div>
+          <button class="btn-primary tool-btn" onclick="calcWater()">Calculate</button>
+          <div id="water-result" class="tool-result hidden"></div>
+        </div>
+
+        <!-- Supplement Guide (full width) -->
+        <div class="tool-card" id="tool-supp">
+          <div class="tool-header">
+            <div class="tool-icon">💊</div>
+            <div>
+              <h3>Supplement Guide</h3>
+              <p>Timing, dosage and pro tips for 9 key supplements. Tap one to get started.</p>
+            </div>
+          </div>
+          <div class="supp-chips">
+            <button class="supp-chip" onclick="lookupSupp('creatine')">Creatine</button>
+            <button class="supp-chip" onclick="lookupSupp('whey protein')">Whey Protein</button>
+            <button class="supp-chip" onclick="lookupSupp('bcaa')">BCAA</button>
+            <button class="supp-chip" onclick="lookupSupp('pre workout')">Pre-Workout</button>
+            <button class="supp-chip" onclick="lookupSupp('omega 3')">Omega-3</button>
+            <button class="supp-chip" onclick="lookupSupp('vitamin d')">Vitamin D</button>
+            <button class="supp-chip" onclick="lookupSupp('magnesium')">Magnesium</button>
+            <button class="supp-chip" onclick="lookupSupp('caffeine')">Caffeine</button>
+            <button class="supp-chip" onclick="lookupSupp('casein')">Casein</button>
+          </div>
+          <div class="tool-row tool-row--narrow">
+            <select id="supp-goal" aria-label="Fitness goal for supplement guide">
+              <option value="fat_loss">🔥 Fat Loss</option>
+              <option value="muscle_gain">🏋️ Muscle Gain</option>
+              <option value="endurance">🏃 Endurance</option>
+              <option value="maintenance">⚖️ Maintenance</option>
+            </select>
+          </div>
+          <div id="supp-result" class="tool-result hidden"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── TAB 5: FRIDGE SCAN ── -->
+    <div id="tab-scan" class="tab-content">
+      <div class="section-card">
+        <h3>📸 AI Ingredient Detection</h3>
+        <p>Upload a fridge or kitchen photo → AI detects ingredients → instantly generates a fitness recipe tailored to your goal.</p>
+      </div>
+      <div class="form-grid">
+        <label class="full-width">📸 Upload Fridge / Kitchen Photo
+          <input type="file" id="scan-image" accept="image/*"/>
+        </label>
+        <label>🎯 Fitness Goal
+          <select id="scan-goal">
+            <option value="fat_loss">🔥 Fat Loss</option>
+            <option value="muscle_gain">🏋️ Muscle Gain</option>
+            <option value="endurance">🏃 Endurance</option>
+            <option value="maintenance">⚖️ Maintenance</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn-primary" onclick="scanFridge()">🔍 Detect &amp; Generate Recipe</button>
+      <div id="scan-detected" class="result-box hidden"></div>
+      <div id="scan-result" class="result-box hidden"></div>
+    </div>
+
+    <!-- ── TAB 6: GUIDE ── -->
+    <div id="tab-guide" class="tab-content">
+
+      <div class="guide-section">
+        <h2>🏋️ How to Use FitFuel AI</h2>
+
+        <h3>⚡ Step 1 — Set Your Goal</h3>
+        <p>Tell the AI your fitness goal in plain words or tap a quick button in the chat:</p>
+        <ul>
+          <li><strong>"I want to build muscle"</strong> → 🏋️ Muscle Gain mode</li>
+          <li><strong>"I'm trying to lose fat"</strong> → 🔥 Fat Loss mode</li>
+          <li><strong>"I need endurance fuel"</strong> → 🏃 Endurance mode</li>
+          <li><strong>"I want to maintain"</strong> → ⚖️ Maintenance mode</li>
+        </ul>
+
+        <h3>🥘 Step 2 — Tell Me Your Ingredients</h3>
+        <p>Even a single ingredient works — FitFuel will build a complete recipe around it:</p>
+        <ul>
+          <li><strong>"I have chicken"</strong> → single ingredient, full recipe</li>
+          <li><strong>"oats"</strong> → just type the ingredient name</li>
+          <li><strong>"chicken breast, broccoli, brown rice"</strong></li>
+          <li><strong>"paneer, spinach, onion, Greek yogurt"</strong></li>
+        </ul>
+
+        <h3>🥗 Step 3 — Dietary Restrictions</h3>
+        <p>Toggle restrictions in the chat panel or type them directly:</p>
+        <ul>
+          <li>"I'm vegan" / "I'm keto" / "I'm gluten-free" / "I'm dairy-free"</li>
+          <li>Conflicting ingredients are automatically excluded from recipes</li>
+        </ul>
+
+        <h3>🎨 Step 4 — Recipe Styles</h3>
+        <p>Use the Style pills to restyle any recipe instantly:</p>
+        <ul>
+          <li><strong>"make it spicy"</strong> → adds chili, pepper, cayenne</li>
+          <li><strong>"make it Indian style"</strong> → turmeric, cumin, garam masala tadka</li>
+          <li><strong>"make it Chinese style"</strong> → soy sauce, ginger stir-fry</li>
+          <li><strong>"make it simple"</strong> → under 5 ingredients, 10 minutes</li>
+        </ul>
+      </div>
+
+      <div class="guide-section">
+        <h2>🗂️ Tab Guide</h2>
+
+        <h3>📊 Fitness Profile</h3>
+        <p>Enter weight, height, age, and activity level to get personalized daily calorie, macro, and water intake targets. Your targets are saved for the calorie tracker.</p>
+
+        <h3>📅 Meal Planner</h3>
+        <p>List your ingredients, choose your goal and number of days (3–7), and get a complete plan with macros for every meal of the day.</p>
+
+        <h3>🧰 Tools</h3>
+        <ul>
+          <li><strong>Macro Lookup</strong> — instant nutrition per 100g for any ingredient</li>
+          <li><strong>Ingredient Swap</strong> — smart substitutes (vegan, keto, allergy-friendly)</li>
+          <li><strong>Shopping List</strong> — weekly grocery list for your goal</li>
+          <li><strong>Supplement Guide</strong> — timing, dose, and pro tips for 9 supplements</li>
+          <li><strong>Hydration Calculator</strong> — precise daily water target</li>
+        </ul>
+
+        <h3>📸 Fridge Scan</h3>
+        <p>Upload a photo of your fridge — AI detects the ingredients and generates a recipe automatically.</p>
+
+        <h3>💡 Pro Tips</h3>
+        <ul>
+          <li>Set up your Fitness Profile first — it saves your calorie target for the tracker</li>
+          <li>Combine goal + ingredient + timing for the most precise recipe output</li>
+          <li>Log calories with the quick bar above the chat input</li>
+          <li>High-protein picks: chicken, eggs, paneer, tofu, lentils, Greek yogurt</li>
+          <li>Type "hi" or "hello" any time to see the full feature list</li>
+        </ul>
+
+        <p class="guide-tagline">FitFuel AI — Because every meal is a rep. 💪</p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

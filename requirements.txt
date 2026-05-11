@@ -1,0 +1,9 @@
+flask
+groq
+chromadb
+python-dotenv
+rapidfuzz
+edge-tts
+Pillow
+httpx
+gunicorn
