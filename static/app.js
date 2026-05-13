@@ -307,42 +307,43 @@ function formatMealPlan(raw) {
 
   const lines = raw.split('\n');
   const out   = [];
+  let dayCount = 0;
 
-  lines.forEach((line, i) => {
-    const trimmed  = line.trim();
-    const prev     = out[out.length - 1] ?? '';
-    const isDayHdr = /^#{1,3}\s*(day\s*\d+|monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i.test(trimmed);
-    const isMeal   = /^#{3,4}\s*(breakfast|lunch|dinner|snack|pre.?workout|post.?workout)/i.test(trimmed);
-    const isBullet = /^[-*]\s/.test(trimmed);
-    const isHdr    = /^#{1,6}\s/.test(trimmed);
-    const isEmpty  = trimmed === '';
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed) return; // skip blanks — we control spacing
 
-    // Always put a blank line before a new day heading (extra gap above it)
-    if (isDayHdr && prev !== '' && prev !== '\n') {
-      out.push('');
-      out.push('---'); // visual divider between days
-      out.push('');
+    // ── Day header: "📅 DAY 1 — ..." or "## DAY 1" ──
+    const isDayHdr =
+      /^(#{1,3}\s*)?(📅\s*)?day\s*\d+/i.test(trimmed) ||
+      /^(#{1,3}\s*)?📅/.test(trimmed);
+
+    // ── Meal line: emoji-prefixed or named meal ──
+    const isMealLine =
+      /^(#{1,4}\s*)?(🌅|🏋️|🏋|☀️|💪|🌙|🍎)/.test(trimmed) ||
+      /^(#{1,4}\s*)?(breakfast|lunch|dinner|snack|pre.?workout|post.?workout)/i.test(trimmed);
+
+    // ── Tip / weekly summary line ──
+    const isTip = /^(💡|🏆|\*\*tip|\*\*weekly)/i.test(trimmed);
+
+    if (isDayHdr) {
+      if (dayCount > 0) out.push('\n---\n');   // divider between days
+      dayCount++;
+      const clean = trimmed.replace(/^#+\s*/, '');
+      out.push(`## ${clean}\n`);               // force h2 heading
+
+    } else if (isMealLine) {
+      out.push(`\n**${trimmed.replace(/^#+\s*/, '')}**`);  // bold each meal row
+
+    } else if (isTip) {
+      out.push(`\n> ${trimmed}`);              // blockquote for tips
+
+    } else {
+      out.push(trimmed);
     }
-
-    // Blank line before meal headings (Breakfast / Lunch / …)
-    if (isMeal && prev !== '') {
-      out.push('');
-    }
-
-    // Blank line before any other non-bullet heading (e.g. "### Summary")
-    if (isHdr && !isDayHdr && !isMeal && prev !== '') {
-      out.push('');
-    }
-
-    // Don't stack multiple blank lines
-    if (isEmpty && prev === '') return;
-
-    out.push(line);
   });
 
-  // Trim leading/trailing blank lines then render
-  const cleaned = out.join('\n').trim();
-  return renderMarkdown(cleaned);
+  return renderMarkdown(out.join('\n'));
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
