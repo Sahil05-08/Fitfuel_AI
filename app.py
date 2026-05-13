@@ -1169,10 +1169,7 @@ def _word_in(word, text):
 def detect_intent(text):
     t = text.lower()
 
-    # FIXED — only treat as greeting if the message is short (pure greeting)
     if any(_word_in(g, t) for g in ["hi", "hello", "hey", "namaste"]):
-        non_greeting_words = [w for w in t.split() if w not in {"hi","hello","hey","namaste","there","how","are","you"}]
-    if len(non_greeting_words) <= 2:   # short message = pure greeting
         return "greeting"
     if any(w in t for w in ["thank", "bye", "goodbye", "see you"]):
         return "closing"
