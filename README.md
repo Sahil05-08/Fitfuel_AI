@@ -7,6 +7,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-Backend-000000?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com)
 [![Groq](https://img.shields.io/badge/Groq-LLaMA%2070B-F54B27?style=for-the-badge)](https://groq.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Sahil%20Suryawanshi-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sahil585/)
 
 ---
 
@@ -88,13 +89,14 @@ Bot:  🍽️ Grilled Chicken & Brown Rice Bowl — 🔥 Fat Loss
 
 | Layer | Technology |
 |---|---|
-| **Backend** | Python 3.10+, Flask |
+| **Backend** | Python 3.10+, Flask, Gunicorn |
 | **AI / LLM** | Groq API — LLaMA 3.3 70B Versatile |
-| **Vision** | Meta LLaMA 4 Scout (fridge scan) |
+| **Vision** | Meta LLaMA 4 Scout 17B (fridge scan) |
 | **Memory** | ChromaDB (persistent vector store) |
 | **Spell Check** | RapidFuzz (fuzzy ingredient matching) |
 | **Text-to-Speech** | edge-tts (Microsoft Neural TTS) |
 | **Image Processing** | Pillow (PIL) |
+| **HTTP Client** | httpx |
 | **Hosting** | Railway |
 | **Frontend** | HTML / CSS / JS (served via Flask Jinja2) |
 
@@ -106,7 +108,7 @@ Bot:  🍽️ Grilled Chicken & Brown Rice Bowl — 🔥 Fat Loss
 
 ```bash
 git clone https://github.com/Sahil05-08/Fitfuel_AI
-cd fitfuel-ai
+cd Fitfuel_AI
 ```
 
 ### 2. Create a Virtual Environment
@@ -148,11 +150,13 @@ Open your browser at `http://localhost:5000`
 ```txt
 flask
 groq
-python-dotenv
 chromadb
+python-dotenv
 rapidfuzz
 edge-tts
 Pillow
+httpx
+gunicorn
 ```
 
 ---
@@ -234,7 +238,7 @@ Intent Detection
 ## 🗂️ Project Structure
 
 ```
-fitfuel-ai/
+Fitfuel_AI/
 ├── app.py                  # Main Flask backend (all logic)
 ├── templates/
 │   └── index.html          # Frontend chat UI
@@ -297,6 +301,8 @@ git push origin feature/your-feature
 **Sahil Suryawanshi**  
 Built with 💪 and a passion for fitness + AI.
 
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sahil585/)
+
 ---
 
 ## 📄 License
@@ -309,6 +315,6 @@ MIT License — free to use, modify, and distribute.
 
 **⭐ Star this repo if FitFuel helped you eat better!**
 
-[🌐 Live App](https://fitnessai-production-5f00.up.railway.app) · [🐛 Report Bug](https://github.com/your-username/fitfuel-ai/issues) · [✨ Request Feature](https://github.com/your-username/fitfuel-ai/issues)
+[🌐 Live App](https://fitnessai-production-5f00.up.railway.app) · [🐛 Report Bug](https://github.com/Sahil05-08/Fitfuel_AI/issues) · [✨ Request Feature](https://github.com/Sahil05-08/Fitfuel_AI/issues) · [💼 LinkedIn](https://www.linkedin.com/in/sahil585/)
 
 </div>
